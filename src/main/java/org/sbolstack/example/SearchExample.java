@@ -9,7 +9,7 @@ public class SearchExample
 {
     public static void main(String[] args) throws Exception
     {
-        StackFrontend frontend = new StackFrontend("http://localhost:9090");
+        StackFrontend frontend = new StackFrontend("http://52.19.236.4:9090");
         
         SBOLDocument template = new SBOLDocument();
         

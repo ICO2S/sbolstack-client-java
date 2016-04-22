@@ -11,7 +11,7 @@ public class RetrieveComponentExample
 {
     public static void main(String[] args) throws StackException, URISyntaxException
     {
-        StackFrontend frontend = new StackFrontend("http://localhost:9090");
+        StackFrontend frontend = new StackFrontend("http://52.19.236.4:9090");
         
         ComponentDefinition componentDefinition =
                 frontend.fetchComponent(null, new URI("http://www.bacillondex.org/BO_10050"));
