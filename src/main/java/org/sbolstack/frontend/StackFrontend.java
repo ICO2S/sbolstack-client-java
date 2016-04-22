@@ -181,7 +181,7 @@ public class StackFrontend
     /**
      * Retrieve a ComponentDefinition from the default store by URI.
      *
-     * @param moduleUri The URI of the component to retrieve
+     * @param componentUri The URI of the component to retrieve
      * 
      * @return A libSBOLj ComponentDefinition instance corresponding to the component
      *
@@ -325,8 +325,8 @@ public class StackFrontend
      *
      * @param storeName The name of the store to query
      * @param template An SBOL document containing the ComponentDefinition template to match
-     * @param offset
-     * @param limit
+     * @param offset The offset of the results to begin at
+     * @param limit The maximum number of results to return
      * 
      * @return An SBOL2 document with a summary of all matching components.
      *
@@ -369,8 +369,8 @@ public class StackFrontend
      * Search the default store for ComponentDefinition instances matching a ComponentDefinition template.
      * 
      * @param template An SBOL document containing the ComponentDefinition template to match
-     * @param offset
-     * @param limit
+     * @param offset The offset of the results to begin at
+     * @param limit The maximum number of results to return
      * 
      * @return An SBOL2 document with a summary of all matching components.
      *
@@ -386,6 +386,7 @@ public class StackFrontend
     /**
      * Return the number of ComponentDefinition instances matching a ComponentDefinition template in a given store.
      * 
+     * @param storeName The name of the store to query
      * @param template An SBOL document containing the ComponentDefinition template to match
      * 
      * @return the number of matching instances as an integer
