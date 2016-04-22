@@ -41,7 +41,7 @@ public class UploadExample
     {
         StackFrontend frontend = new StackFrontend("http://localhost:9090");
         
-        ComponentDefinition componentDefinition = frontend.getComponent(new URI("http://sbolstack.org/" + name));
+        ComponentDefinition componentDefinition = frontend.fetchComponent(new URI("http://sbolstack.org/" + name));
         
         System.out.println(componentDefinition.getRoles().toArray()[0]);
         

@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +62,7 @@ public class StackFrontend
      */
     public int countComponents(String storeName) throws StackException
     {
-        return getCount(backendUrl + storeUriFragment(storeName) + "/component/count");
+        return fetchCount(backendUrl + storeUriFragment(storeName) + "/component/count");
     }
 
     /**
@@ -92,7 +91,7 @@ public class StackFrontend
      */
     public int countModules(String storeName) throws StackException
     {
-        return getCount(backendUrl + storeUriFragment(storeName) + "/module/count");
+        return fetchCount(backendUrl + storeUriFragment(storeName) + "/module/count");
     }
 
     /**
@@ -121,7 +120,7 @@ public class StackFrontend
      */
     public int countCollections(String storeName) throws StackException
     {
-        return getCount(backendUrl + storeUriFragment(storeName) + "/collection/count");
+        return fetchCount(backendUrl + storeUriFragment(storeName) + "/collection/count");
     }
 
     /**
@@ -150,7 +149,7 @@ public class StackFrontend
      */
     public int countSequences(String storeName) throws StackException
     {
-        return getCount(backendUrl + storeUriFragment(storeName) + "/sequence/count");
+        return fetchCount(backendUrl + storeUriFragment(storeName) + "/sequence/count");
     }
 
     /**
@@ -166,11 +165,11 @@ public class StackFrontend
      * @throws NotFoundException if the specified URI was not found
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public ComponentDefinition getComponent(String storeName, URI componentUri) throws StackException
+    public ComponentDefinition fetchComponent(String storeName, URI componentUri) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/component/" + encodeUri(componentUri) + "/sbol";
                 
-        TopLevel topLevel = getTopLevel(url, componentUri);
+        TopLevel topLevel = fetchTopLevel(url, componentUri);
         
         if(! (topLevel instanceof ComponentDefinition))
             throw new StackException("Expected ComponentDefinition, found " + topLevel.getClass().getName());
@@ -189,9 +188,9 @@ public class StackFrontend
      * @throws NotFoundException if the specified URI was not found
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public ComponentDefinition getComponent(URI componentUri) throws StackException
+    public ComponentDefinition fetchComponent(URI componentUri) throws StackException
     {
-        return getComponent(null, componentUri);
+        return fetchComponent(null, componentUri);
     }
 
     /**
@@ -209,11 +208,11 @@ public class StackFrontend
      * @throws NotFoundException if the specified URI was not found
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public ModuleDefinition getModule(String storeName, URI moduleUri) throws StackException
+    public ModuleDefinition fetchModule(String storeName, URI moduleUri) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/module/" + encodeUri(moduleUri) + "/sbol";
                 
-        TopLevel topLevel = getTopLevel(url, moduleUri);
+        TopLevel topLevel = fetchTopLevel(url, moduleUri);
         
         if(! (topLevel instanceof ModuleDefinition))
             throw new StackException("Expected ModuleDefinition, found " + topLevel.getClass().getName());
@@ -232,9 +231,9 @@ public class StackFrontend
      * @throws NotFoundException if the specified URI was not found
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public ModuleDefinition getModule(URI moduleUri) throws StackException
+    public ModuleDefinition fetchModule(URI moduleUri) throws StackException
     {
-        return getModule(null, moduleUri);
+        return fetchModule(null, moduleUri);
     }
 
 
@@ -251,11 +250,11 @@ public class StackFrontend
      * @throws NotFoundException if the specified URI was not found
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public Collection getCollection(String storeName, URI collectionUri) throws StackException
+    public Collection fetchCollection(String storeName, URI collectionUri) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/collection/" + encodeUri(collectionUri) + "/sbol";
                 
-        TopLevel topLevel = getTopLevel(url, collectionUri);
+        TopLevel topLevel = fetchTopLevel(url, collectionUri);
         
         if(! (topLevel instanceof Collection))
             throw new StackException("Expected Collection, found " + topLevel.getClass().getName());
@@ -274,9 +273,9 @@ public class StackFrontend
      * @throws NotFoundException if the specified URI was not found
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public Collection getCollection(URI collectionUri) throws StackException
+    public Collection fetchCollection(URI collectionUri) throws StackException
     {
-        return getCollection(null, collectionUri);
+        return fetchCollection(null, collectionUri);
     }
 
     /**
@@ -292,11 +291,11 @@ public class StackFrontend
      * @throws NotFoundException if the specified URI was not found
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public Sequence getSequence(String storeName, URI sequenceUri) throws StackException
+    public Sequence fetchSequence(String storeName, URI sequenceUri) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/sequence/" + encodeUri(sequenceUri) + "/sbol";
                 
-        TopLevel topLevel = getTopLevel(url, sequenceUri);
+        TopLevel topLevel = fetchTopLevel(url, sequenceUri);
         
         if(! (topLevel instanceof Collection))
             throw new StackException("Expected Sequence, found " + topLevel.getClass().getName());
@@ -315,9 +314,9 @@ public class StackFrontend
      * @throws NotFoundException if the specified URI was not found
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public Sequence getSequence(URI sequenceUri) throws StackException
+    public Sequence fetchSequence(URI sequenceUri) throws StackException
     {
-        return getSequence(null, sequenceUri);
+        return fetchSequence(null, sequenceUri);
     }
 
     /**
@@ -537,13 +536,13 @@ public class StackFrontend
         
     }
 
-    private TopLevel getTopLevel(String url, URI topLevelUri) throws StackException
+    private TopLevel fetchTopLevel(String url, URI topLevelUri) throws StackException
     {
         InputStream inputStream;
         
         try
         {
-            inputStream = getInputStream(url);
+            inputStream = fetchContentAsInputStream(url);
         }
         catch (Exception e)
         {
@@ -571,11 +570,11 @@ public class StackFrontend
         return topLevel;
     }
 
-    private int getCount(String url) throws StackException
+    private int fetchCount(String url) throws StackException
     {
         try
         {
-            return Integer.parseInt(getString(url));
+            return Integer.parseInt(fetchContentAsString(url));
         }
         catch(Exception e)
         {
@@ -583,9 +582,9 @@ public class StackFrontend
         }
     }
     
-    private String getString(String url) throws StackException, IOException
+    private String fetchContentAsString(String url) throws StackException, IOException
     {
-        return inputStreamToString(getInputStream(url));
+        return inputStreamToString(fetchContentAsInputStream(url));
     }
 
     private String inputStreamToString(InputStream inputStream) throws IOException
@@ -597,7 +596,7 @@ public class StackFrontend
         return writer.toString();
     }
     
-    private InputStream getInputStream(String url) throws StackException, IOException
+    private InputStream fetchContentAsInputStream(String url) throws StackException, IOException
     {
         HttpGet request = new HttpGet(url);
         HttpResponse response = client.execute(request);

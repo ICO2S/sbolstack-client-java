@@ -14,7 +14,7 @@ public class RetrieveComponentExample
         StackFrontend frontend = new StackFrontend("http://localhost:9090");
         
         ComponentDefinition componentDefinition =
-                frontend.getComponent(null, new URI("http://www.bacillondex.org/BO_10050"));
+                frontend.fetchComponent(null, new URI("http://www.bacillondex.org/BO_10050"));
         
         System.out.println(componentDefinition.getSequences().toArray()[0]);
     }
