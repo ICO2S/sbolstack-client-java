@@ -37,16 +37,16 @@ Javadoc can be found [here](http://ico2s.github.io/sbolstack-client-java/).
 
 Several examples can be found in the [`org.sbolstack.example`](https://github.com/ICO2S/sbolstack-client-java/tree/master/src/main/java/org/sbolstack/example) package.
 
-All interatcion with the stack is through the [`StackFrontend`](http://ico2s.github.io/sbolstack-client-java/) facade.
-Instances are created with the URL of the stack that they will bind against.
+All interaction with the stack is through the [`StackFrontend`](http://ico2s.github.io/sbolstack-client-java/) facade.
+Instances are created with the URL of their stack instance.
 
 ```java
 StackFrontend frontend = new StackFrontend("http://localhost:9090");
 ```
 
-This instance can then be used to count, search, fetch and upload SBOL data to the remote stack instance.
+This instance can then be used to fetch, count, search and upload SBOL data to the remote stack instance.
 
-If you know the URI of an SBOL entity, you can fetch it directly rather than going via a template. For example:
+If you know the URI of an SBOL entity, you can fetch it directly. For example:
 
  ```java
  ComponentDefinition cdef = Sequence fetchComponentDefinition(new URI("http://www.bacillondex.org/BO_10050"));
@@ -61,7 +61,7 @@ SBOLDocument template = new SBOLDocument();
 template.setDefaultURIPrefix("http://www.bacillondex.org/");
 ```
 
-This can then be used to make an SBOL entity to be used for searching, fetching or uploading.
+This can then be used to make an SBOL entity to be used for counting, searching or uploading.
 For example:
 
 ```java
@@ -69,7 +69,7 @@ template.createComponentDefinition("BO_10050", ComponentDefinition.PROTEIN);
 int count = frontend.countMatchingComponents(template);
 ```
 
-This will query the stack for all component definition instances with the displayId "BO_10050" and of type Protein.
+This will query the stack for all component definition instances with the displayId "BO_10050" and of type Protein, returning the number of hits.
 Rather than counting the result, we can search for them:
 
 ```java
