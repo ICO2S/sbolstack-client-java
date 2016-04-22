@@ -46,7 +46,15 @@ StackFrontend frontend = new StackFrontend("http://localhost:9090");
 
 This instance can then be used to count, search, fetch and upload SBOL data to the remote stack instance.
 
-Firstly, create an `SBOLDocument` instance to act as a template for interacting with the stack.
+If you know the URI of an SBOL entity, you can fetch it directly rather than going via a template. For example:
+
+ ```java
+ ComponentDefinition cdef = Sequence fetchComponentDefinition(new URI("http://www.bacillondex.org/BO_10050"));
+ ```
+
+Often, you may not know the exact URI of the object to fetch.
+The stack client supports template-directed querying.
+First create an `SBOLDocument` instance to act as a template for interacting with the stack.
 
 ```java
 SBOLDocument template = new SBOLDocument();
@@ -62,7 +70,20 @@ int count = frontend.countMatchingComponents(template);
 ```
 
 This will query the stack for all component definition instances with the displayId "BO_10050" and of type Protein.
-Rather than counting the result, we can fetch them:
+Rather than counting the result, we can search for them:
 
- ```java
- ```
+```java
+SBOLDocument results = frontend.searchComponents(template, 0, 1000);
+```
+
+This returns a document with the matching components, paged from result 0 to 1000.
+Finally, documents can be uploaded wholesale to a stack:
+
+```java
+ComponentDefinition componentDefinition = document.createComponentDefinition(name, ComponentDefinition.DNA);
+componentDefinition.addRole(new URI("http://sbolstack.org/testcomponent"));
+frontend.upload(document);
+```
+
+Variants of these operations exist for different SBOL top-level data types.
+If you think something is missing, please get in touch and we will add it.
