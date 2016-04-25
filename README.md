@@ -58,7 +58,7 @@ First create an `SBOLDocument` instance to act as a template for interacting wit
 
 ```java
 SBOLDocument template = new SBOLDocument();
-template.setDefaultURIPrefix("http://www.bacillondex.org/");
+template.setDefaultURIprefix("http://www.bacillondex.org/");
 ```
 
 This can then be used to make an SBOL entity to be used for counting, searching or uploading.
