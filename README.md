@@ -49,7 +49,7 @@ This instance can then be used to fetch, count, search and upload SBOL data to t
 If you know the URI of an SBOL entity, you can fetch it directly. For example:
 
  ```java
- ComponentDefinition cdef = Sequence fetchComponentDefinition(new URI("http://www.bacillondex.org/BO_10050"));
+ ComponentDefinition cdef = frontend.fetchComponent(new URI("http://www.bacillondex.org/BO_10050"));
  ```
 
 Often, you may not know the exact URI of the object to fetch.
