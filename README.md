@@ -19,7 +19,8 @@ git clone https://github.com/ICO2S/sbolstack-client-java.git
 Then install locally using maven:
 
 ```
-maven install
+cd sbolstack-client-java
+mvn install
 ```
 
 ## Adding the client as a dependency
