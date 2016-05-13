@@ -3,7 +3,12 @@
 This project provides a programatic client to the [SBOL Stack](http://sbolstack.org).
 It allows you to populate the [libSBOLj](https://github.com/SynBioDex/libSBOLj) data model directly from a stack instance.
 
-## Building
+
+## Installation
+
+JAR files are available on the [Releases](https://github.com/ICO2S/sbolstack-client-java/releases) page.
+
+## Building from Source
 
 This project is built using maven. First, check out the source:
 
