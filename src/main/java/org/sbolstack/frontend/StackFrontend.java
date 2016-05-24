@@ -10,7 +10,9 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -27,20 +29,20 @@ public class StackFrontend
 {
     HttpClient client;
     String backendUrl;
-    
+
     public StackFrontend(String backendUrl)
     {
         this.backendUrl = backendUrl;
-        
+
         client = HttpClients.createDefault();
     }
-    
-    
+
+
     /**
      * Return the total number of ComponentDefinition instances present in the default store.
      *
      * @return the number of ComponentDefinition instances as an integer
-     * 
+     *
      * @throws StackException if there was an error communicating with the Stack
      * @throws PermissionException if read permission is not granted by the backend
      */
@@ -51,11 +53,11 @@ public class StackFrontend
 
     /**
      * Return the total number of ComponentDefinition instances present in a given store.
-     * 
+     *
      * @param storeName The name of the store to query
      *
      * @return the number of ComponentDefinition instances as an integer
-     * 
+     *
      * @throws StackException if there was an error communicating with the stack
      * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
@@ -67,7 +69,7 @@ public class StackFrontend
 
     /**
      * Return the total number of ModuleDefinition instances present in the default store.
-     * 
+     *
      * @return the number of ModuleDefinition instances as an integer
      *
      * @throws StackException if there was an error communicating with the Stack
@@ -77,14 +79,14 @@ public class StackFrontend
     {
         return countModules(null);
     }
-    
+
     /**
      * Return the total number of ModuleDefinition instances present in a given store.
-     * 
+     *
      * @return the number of ModuleDefinition instances as an integer
      *
      * @param storeName The name of the store to query
-     * 
+     *
      * @throws StackException if there was an error communicating with the stack
      * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
@@ -96,7 +98,7 @@ public class StackFrontend
 
     /**
      * Return the total number of Collection instances present in the default store.
-     * 
+     *
      * @return the number of Collection instances as an integer
      *
      * @throws StackException if there was an error communicating with the Stack
@@ -109,11 +111,11 @@ public class StackFrontend
 
     /**
      * Return the total number of Collection instances present in a given store.
-     * 
+     *
      * @return the number of Collection instances as an integer
      *
      * @param storeName The name of the store to query
-     * 
+     *
      * @throws StackException if there was an error communicating with the stack
      * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
@@ -125,7 +127,7 @@ public class StackFrontend
 
     /**
      * Return the total number of Sequence instances present in the default store.
-     * 
+     *
      * @return the number of Sequence instances as an integer
      *
      * @throws StackException if there was an error communicating with the Stack
@@ -138,11 +140,11 @@ public class StackFrontend
 
     /**
      * Return the total number of Sequence instances present in a given store.
-     * 
+     *
      * @return the number of Sequence instances as an integer
      *
      * @param storeName The name of the store to query
-     * 
+     *
      * @throws StackException if there was an error communicating with the stack
      * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
@@ -154,12 +156,12 @@ public class StackFrontend
 
     /**
      * Retrieve a ComponentDefinition from a given store by URI.
-     * 
+     *
      * @param storeName The name of the store to query
      * @param componentUri The URI of the component to retrieve
-     * 
+     *
      * @return A libSBOLj ComponentDefinition instance corresponding to the component
-     * 
+     *
      * @throws StackException if there was an error communicating with the stack
      * @throws StackException if the specified store name does not exist
      * @throws NotFoundException if the specified URI was not found
@@ -168,9 +170,9 @@ public class StackFrontend
     public ComponentDefinition fetchComponent(String storeName, URI componentUri) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/component/" + encodeUri(componentUri) + "/sbol";
-                
+
         TopLevel topLevel = fetchTopLevel(url, componentUri);
-        
+
         if(! (topLevel instanceof ComponentDefinition))
             throw new StackException("Expected ComponentDefinition, found " + topLevel.getClass().getName());
 
@@ -181,7 +183,7 @@ public class StackFrontend
      * Retrieve a ComponentDefinition from the default store by URI.
      *
      * @param componentUri The URI of the component to retrieve
-     * 
+     *
      * @return A libSBOLj ComponentDefinition instance corresponding to the component
      *
      * @throws StackException if there was an error communicating with the stack
@@ -195,14 +197,14 @@ public class StackFrontend
 
     /**
      * Retrieve a ModuleDefinition from a given store by URI.
-     * 
+     *
      * @param storeName The name of the store to query
      * @param moduleUri The URI of the module to retrieve
-     * 
+     *
      * @return A libSBOLj ModuleDefinition instance corresponding to the module
      *
      * @param storeName The name of the store to query
-     * 
+     *
      * @throws StackException if there was an error communicating with the stack
      * @throws StackException if the specified store name does not exist
      * @throws NotFoundException if the specified URI was not found
@@ -211,9 +213,9 @@ public class StackFrontend
     public ModuleDefinition fetchModule(String storeName, URI moduleUri) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/module/" + encodeUri(moduleUri) + "/sbol";
-                
+
         TopLevel topLevel = fetchTopLevel(url, moduleUri);
-        
+
         if(! (topLevel instanceof ModuleDefinition))
             throw new StackException("Expected ModuleDefinition, found " + topLevel.getClass().getName());
 
@@ -224,7 +226,7 @@ public class StackFrontend
      * Retrieve a ModuleDefinition from the default store by URI.
      *
      * @param moduleUri The URI of the module to retrieve
-     * 
+     *
      * @return A libSBOLj ModuleDefinition instance corresponding to the module
      *
      * @throws StackException if there was an error communicating with the stack
@@ -239,10 +241,10 @@ public class StackFrontend
 
     /**
      * Retrieve a Collection from a given store by URI.
-     * 
+     *
      * @param storeName The name of the store to query
      * @param collectionUri The URI of the collection to retrieve
-     * 
+     *
      * @return A libSBOLj Collection instance corresponding to the collection
      *
      * @throws StackException if there was an error communicating with the stack
@@ -253,9 +255,9 @@ public class StackFrontend
     public Collection fetchCollection(String storeName, URI collectionUri) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/collection/" + encodeUri(collectionUri) + "/sbol";
-                
+
         TopLevel topLevel = fetchTopLevel(url, collectionUri);
-        
+
         if(! (topLevel instanceof Collection))
             throw new StackException("Expected Collection, found " + topLevel.getClass().getName());
 
@@ -266,7 +268,7 @@ public class StackFrontend
      * Retrieve a Collection from the default store by URI.
      *
      * @param collectionUri The URI of the collection to retrieve
-     * 
+     *
      * @return A libSBOLj Collection instance corresponding to the collection
      *
      * @throws StackException if there was an error communicating with the stack
@@ -283,7 +285,7 @@ public class StackFrontend
      *
      * @param storeName The name of the store to query
      * @param sequenceUri The URI of the sequence to retrieve
-     *  
+     *
      * @return A libSBOLj Sequence instance corresponding to the sequence
      *
      * @throws StackException if there was an error communicating with the stack
@@ -294,9 +296,9 @@ public class StackFrontend
     public Sequence fetchSequence(String storeName, URI sequenceUri) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/sequence/" + encodeUri(sequenceUri) + "/sbol";
-                
+
         TopLevel topLevel = fetchTopLevel(url, sequenceUri);
-        
+
         if(! (topLevel instanceof Collection))
             throw new StackException("Expected Sequence, found " + topLevel.getClass().getName());
 
@@ -307,7 +309,7 @@ public class StackFrontend
      * Retrieve a Sequence from the default store by URI.
      *
      * @param sequenceUri The URI of the sequence
-     * 
+     *
      * @return A libSBOLj Sequence instance corresponding to the sequence
      *
      * @throws StackException if there was an error communicating with the stack
@@ -324,26 +326,31 @@ public class StackFrontend
      *
      * @param storeName The name of the store to query
      * @param template An SBOL document containing the ComponentDefinition template to match
-     * @param offset The offset of the results to begin at
-     * @param limit The maximum number of results to return
-     * 
+     * @param offset The offset of the results to begin at, or null to begin at 0
+     * @param limit The maximum number of results to return, or null to return all results
+     *
      * @return An SBOL2 document with a summary of all matching components.
      *
      * @throws StackException if there was an error communicating with the stack
      * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public SBOLDocument searchComponents(String storeName, SBOLDocument template, int offset, int limit) throws StackException
+    public SBOLDocument searchComponents(String storeName, SBOLDocument template, Integer offset, Integer limit) throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/component/search/template";
 
         HttpPost request = new HttpPost(url);
-        
+
         List<NameValuePair> params = new ArrayList<NameValuePair>();
+
         params.add(new BasicNameValuePair("sbol", serializeDocument(template)));
-        params.add(new BasicNameValuePair("offset", Integer.toString(offset)));
-        params.add(new BasicNameValuePair("limit", Integer.toString(limit)));
-        
+
+        if(offset != null)
+            params.add(new BasicNameValuePair("offset", Integer.toString(offset)));
+
+        if(limit != null)
+            params.add(new BasicNameValuePair("limit", Integer.toString(limit)));
+
         try
         {
             request.setEntity(new UrlEncodedFormEntity(params));
@@ -351,11 +358,78 @@ public class StackFrontend
             HttpResponse response = client.execute(request);
 
             checkResponseCode(response);
-            
+
             InputStream inputStream = response.getEntity().getContent();
-            
+
             SBOLDocument resultDocument = SBOLReader.read(inputStream);
-            
+
+            return resultDocument;
+        }
+        catch (Exception e)
+        {
+            throw new StackException(e);
+        }
+    }
+
+
+    /**
+     * Search a given store for ComponentDefinition instances matching a name and/or a set of roles
+     *
+     * @param storeName The name of the store to query
+     * @param name The dcterms:title to search for, or null
+     * @param roles A set of role URIs to search for, or null
+     * @param offset The offset of the results to begin at, or null to begin at 0
+     * @param limit The maximum number of results to return, or null to return all results
+     *
+     * @return An SBOL2 document with a summary of all matching components.
+     *
+     * @throws StackException if there was an error communicating with the stack
+     * @throws StackException if the specified store name does not exist
+     * @throws PermissionException if read permission is not granted by the backend
+     */
+    public SBOLDocument searchComponents(String storeName, String name, Set<URI> roles, Integer offset, Integer limit)
+            throws StackException
+    {
+        String url = backendUrl + storeUriFragment(storeName) + "/component/search/sbol";
+
+        SearchQuery query = new SearchQuery();
+
+        query.offset = offset;
+        query.limit = limit;
+
+        for(URI uri : roles)
+        {
+            SearchCriteria roleCriteria = new SearchCriteria();
+
+            roleCriteria.key = "role";
+            roleCriteria.value = uri.toString();
+        }
+
+        if(name != null)
+        {
+            SearchCriteria nameCriteria = new SearchCriteria();
+
+            nameCriteria.key = "name";
+            nameCriteria.value = name;
+        }
+
+        Gson gson = new Gson();
+
+        HttpPost request = new HttpPost(url);
+
+        try
+        {
+            request.setHeader("Content-Type", "application/json");
+            request.setEntity(new StringEntity(gson.toJson(query)));
+
+            HttpResponse response = client.execute(request);
+
+            checkResponseCode(response);
+
+            InputStream inputStream = response.getEntity().getContent();
+
+            SBOLDocument resultDocument = SBOLReader.read(inputStream);
+
             return resultDocument;
         }
         catch (Exception e)
@@ -365,18 +439,39 @@ public class StackFrontend
     }
 
     /**
+     * Search the default store for ComponentDefinition instances matching a name and/or a set of roles
+     *
+     * @param name The dcterms:title to search for, or null
+     * @param roles A set of role URIs to search for, or null
+     * @param offset The offset of the results to begin at, or null to begin at 0
+     * @param limit The maximum number of results to return, or null to return all results
+     *
+     * @return An SBOL2 document with a summary of all matching components.
+     *
+     * @throws StackException if there was an error communicating with the stack
+     * @throws StackException if the specified store name does not exist
+     * @throws PermissionException if read permission is not granted by the backend
+     */
+    public SBOLDocument searchComponents(String name, Set<URI> roles, Integer offset, Integer limit)
+            throws StackException
+    {
+        return searchComponents(null, name, roles, offset, limit);
+    }
+
+
+    /**
      * Search the default store for ComponentDefinition instances matching a ComponentDefinition template.
      * 
      * @param template An SBOL document containing the ComponentDefinition template to match
-     * @param offset The offset of the results to begin at
-     * @param limit The maximum number of results to return
+     * @param offset The offset of the results to begin at, or null to begin at 0
+     * @param limit The maximum number of results to return, or null to return all results
      * 
      * @return An SBOL2 document with a summary of all matching components.
      *
      * @throws StackException if there was an error communicating with the stack
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public SBOLDocument searchComponents(SBOLDocument template, int offset, int limit) throws StackException
+    public SBOLDocument searchComponents(SBOLDocument template, Integer offset, Integer limit) throws StackException
     {
         return searchComponents(null, template, offset, limit);
     }

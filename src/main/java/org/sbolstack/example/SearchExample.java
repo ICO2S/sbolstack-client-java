@@ -1,23 +1,22 @@
+
 package org.sbolstack.example;
 
 import org.sbolstack.frontend.StackFrontend;
-import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLWriter;
+import java.net.URI;
+import java.util.HashSet;
 
 public class SearchExample
 {
     public static void main(String[] args) throws Exception
     {
-        StackFrontend frontend = new StackFrontend("http://52.19.236.4:9090");
-        
-        SBOLDocument template = new SBOLDocument();
-        
-        template.setDefaultURIprefix("http://www.bacillondex.org/");        
-        template.createComponentDefinition("BO_10050", ComponentDefinition.PROTEIN);
+        StackFrontend frontend = new StackFrontend("http://localhost:9090");
 
-        SBOLDocument results = frontend.searchComponents(template, 0, 1000);
-        
+        HashSet<URI> roles = new HashSet<URI>();
+
+        SBOLDocument results = frontend.searchComponents("BO_*", roles, 0, 2);
+
         SBOLWriter.write(results, System.out);
     }
 }

@@ -24,7 +24,7 @@ public class UploadExample
     
     public static void upload(String name) throws StackException, URISyntaxException
     {
-        StackFrontend frontend = new StackFrontend("http://52.19.236.4:9090");
+        StackFrontend frontend = new StackFrontend("http://synbiohub.org:9090");
         
         SBOLDocument document = new SBOLDocument();
         document.setDefaultURIprefix("http://sbolstack.org/");
@@ -39,7 +39,7 @@ public class UploadExample
     
     public static void retrieve(String name) throws StackException, URISyntaxException
     {
-        StackFrontend frontend = new StackFrontend("http://52.19.236.4:9090");
+        StackFrontend frontend = new StackFrontend("http://synbiohub.org:9090");
         
         ComponentDefinition componentDefinition = frontend.fetchComponent(new URI("http://sbolstack.org/" + name));
         

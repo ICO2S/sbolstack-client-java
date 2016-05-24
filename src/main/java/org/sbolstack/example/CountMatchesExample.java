@@ -9,7 +9,7 @@ public class CountMatchesExample
 {
     public static void main(String[] args) throws StackException
     {
-        StackFrontend frontend = new StackFrontend("http://52.19.236.4:9090");
+        StackFrontend frontend = new StackFrontend("http://synbiohub.org:9090");
         
         SBOLDocument template = new SBOLDocument();
         template.setDefaultURIprefix("http://www.bacillondex.org/");
