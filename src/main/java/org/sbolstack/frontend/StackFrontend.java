@@ -2,8 +2,10 @@
 package org.sbolstack.frontend;
 
 import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -449,7 +453,6 @@ public class StackFrontend
      * @return An SBOL2 document with a summary of all matching components.
      *
      * @throws StackException if there was an error communicating with the stack
-     * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
      */
     public SBOLDocument searchComponents(String name, Set<URI> roles, Integer offset, Integer limit)
@@ -478,6 +481,95 @@ public class StackFrontend
 
 
     /**
+     * Search the default store for ComponentDefinition instances matching a name and/or a set of roles
+     *
+     * @param name The dcterms:title to search for, or null
+     * @param roles A set of role URIs to search for, or null
+     * @param offset The offset of the results to begin at, or null to begin at 0
+     * @param limit The maximum number of results to return, or null to return all results
+     *
+     * @return An ArrayList of ComponentMetaData objects with a summary of all matching components.
+     *
+     * @throws StackException if there was an error communicating with the stack
+     * @throws PermissionException if read permission is not granted by the backend
+     */
+    public ArrayList<ComponentMetadata> searchComponentMetadata(String name, Set<URI> roles, Integer offset, Integer limit)
+            throws StackException
+    {
+        return searchComponentMetadata(null, name, roles, offset, limit);
+    }
+
+    
+    /**
+     * Search a given store for ComponentDefinition instances matching a name and/or a set of roles
+     *
+     * @param storeName The name of the store to query
+     * @param name The dcterms:title to search for, or null
+     * @param roles A set of role URIs to search for, or null
+     * @param offset The offset of the results to begin at, or null to begin at 0
+     * @param limit The maximum number of results to return, or null to return all results
+     *
+     * @return An ArrayList of ComponentMetaData objects with a summary of all matching components.
+     *
+     * @throws StackException if there was an error communicating with the stack
+     * @throws StackException if the specified store name does not exist
+     * @throws PermissionException if read permission is not granted by the backend
+     */
+    public ArrayList<ComponentMetadata> searchComponentMetadata(String storeName, String name, Set<URI> roles, Integer offset, Integer limit)
+            throws StackException
+    {
+        String url = backendUrl + storeUriFragment(storeName) + "/component/search/metadata";
+
+        SearchQuery query = new SearchQuery();
+
+        query.offset = offset;
+        query.limit = limit;
+
+        for(URI uri : roles)
+        {
+            SearchCriteria roleCriteria = new SearchCriteria();
+
+            roleCriteria.key = "role";
+            roleCriteria.value = uri.toString();
+        }
+
+        if(name != null)
+        {
+            SearchCriteria nameCriteria = new SearchCriteria();
+
+            nameCriteria.key = "name";
+            nameCriteria.value = name;
+        }
+
+        Gson gson = new Gson();
+
+        HttpPost request = new HttpPost(url);
+
+        try
+        {
+            request.setHeader("Content-Type", "application/json");
+            request.setEntity(new StringEntity(gson.toJson(query)));
+
+            HttpResponse response = client.execute(request);
+
+            checkResponseCode(response);
+
+            InputStream inputStream = response.getEntity().getContent();
+
+            ArrayList<ComponentMetadata> metadataList = gson.fromJson(
+            		new InputStreamReader(inputStream),
+            			new TypeToken<ArrayList<ComponentMetadata>>(){}.getType());
+            
+            return metadataList;
+        }
+        catch (Exception e)
+        {
+            throw new StackException(e);
+        }
+    }
+
+    
+    /**
      * Return the number of ComponentDefinition instances matching a ComponentDefinition template in a given store.
      * 
      * @param storeName The name of the store to query
@@ -491,7 +583,7 @@ public class StackFrontend
      */
     public int countMatchingComponents(String storeName, SBOLDocument template) throws StackException
     {
-        String url = backendUrl + storeUriFragment(storeName) + "/component/count/template";
+        String url = backendUrl + storeUriFragment(storeName) + "/component/search/template";
 
         HttpPost request = new HttpPost(url);
         
