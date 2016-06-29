@@ -531,6 +531,8 @@ public class StackFrontend
 
             roleCriteria.key = "role";
             roleCriteria.value = uri.toString();
+            
+            query.criteria.add(roleCriteria);
         }
 
         if(name != null)
@@ -539,6 +541,8 @@ public class StackFrontend
 
             nameCriteria.key = "name";
             nameCriteria.value = name;
+
+            query.criteria.add(nameCriteria);
         }
 
         Gson gson = new Gson();
