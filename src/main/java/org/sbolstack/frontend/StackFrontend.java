@@ -41,6 +41,10 @@ public class StackFrontend
         client = HttpClients.createDefault();
     }
 
+    public String getBackendUrl()
+    {
+        return this.backendUrl;
+    }
 
     /**
      * Return the total number of ComponentDefinition instances present in the default store.
