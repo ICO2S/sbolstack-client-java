@@ -6,5 +6,6 @@ public class ComponentMetadata
 	public String name;
 	public String displayId;
 	public String description;
+    public String version;
 }
 
