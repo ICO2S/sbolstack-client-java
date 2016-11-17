@@ -8,10 +8,11 @@ import org.sbolstack.frontend.StackException;
 import org.sbolstack.frontend.StackFrontend;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
 
 public class UploadExample
 {
-    public static void main(String[] args) throws StackException, URISyntaxException
+    public static void main(String[] args) throws StackException, URISyntaxException, SBOLValidationException
     {
         Random random = new Random();
 
@@ -22,7 +23,7 @@ public class UploadExample
         retrieve(testUri);
     }
     
-    public static void upload(String name) throws StackException, URISyntaxException
+    public static void upload(String name) throws StackException, URISyntaxException, SBOLValidationException
     {
         StackFrontend frontend = new StackFrontend("http://synbiohub.org:9090");
         

@@ -9,16 +9,15 @@ import org.sbolstack.frontend.StackException;
 import org.sbolstack.frontend.StackFrontend;
 import org.sbolstandard.core2.SequenceOntology;
 
-public class SearchMetadataExample {
+public class SearchCollectionMetadataExample {
 
 	public static void main(String[] args) throws StackException
 	{
         StackFrontend frontend = new StackFrontend("http://synbiohub.org:9090");
       
-        HashSet<URI> roles = new HashSet<URI>();
-        roles.add(SequenceOntology.PROMOTER);
+        ArrayList<IdentifiedMetadata> results = frontend.searchCollectionMetadata(null, 0, 1000);
         
-        ArrayList<IdentifiedMetadata> results = frontend.searchComponentMetadata(null, roles, 0, 1000);
+        System.out.println(results.size() + " result(s)");
         
         for(IdentifiedMetadata result : results)
         {

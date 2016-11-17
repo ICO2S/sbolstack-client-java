@@ -1,6 +1,6 @@
 package org.sbolstack.frontend;
 
-public class ComponentMetadata
+public class IdentifiedMetadata
 {
 	public String uri;
 	public String name;

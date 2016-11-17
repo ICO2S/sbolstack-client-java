@@ -4,10 +4,11 @@ package org.sbolstack.example;
 import org.sbolstack.frontend.*;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
 
 public class CountMatchesExample
 {
-    public static void main(String[] args) throws StackException
+    public static void main(String[] args) throws StackException, SBOLValidationException
     {
         StackFrontend frontend = new StackFrontend("http://synbiohub.org:9090");
         

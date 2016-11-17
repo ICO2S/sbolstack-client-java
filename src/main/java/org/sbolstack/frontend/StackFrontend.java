@@ -497,7 +497,7 @@ public class StackFrontend
      * @throws StackException if there was an error communicating with the stack
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public ArrayList<ComponentMetadata> searchComponentMetadata(String name, Set<URI> roles, Integer offset, Integer limit)
+    public ArrayList<IdentifiedMetadata> searchComponentMetadata(String name, Set<URI> roles, Integer offset, Integer limit)
             throws StackException
     {
         return searchComponentMetadata(null, name, roles, offset, limit);
@@ -519,7 +519,7 @@ public class StackFrontend
      * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public ArrayList<ComponentMetadata> searchComponentMetadata(String storeName, String name, Set<URI> roles, Integer offset, Integer limit)
+    public ArrayList<IdentifiedMetadata> searchComponentMetadata(String storeName, String name, Set<URI> roles, Integer offset, Integer limit)
             throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/component/search/metadata";
@@ -564,9 +564,9 @@ public class StackFrontend
 
             InputStream inputStream = response.getEntity().getContent();
 
-            ArrayList<ComponentMetadata> metadataList = gson.fromJson(
+            ArrayList<IdentifiedMetadata> metadataList = gson.fromJson(
             		new InputStreamReader(inputStream),
-            			new TypeToken<ArrayList<ComponentMetadata>>(){}.getType());
+            			new TypeToken<ArrayList<IdentifiedMetadata>>(){}.getType());
             
             return metadataList;
         }
@@ -576,6 +576,62 @@ public class StackFrontend
         }
     }
 
+
+    /**
+     * 
+     */
+    public ArrayList<IdentifiedMetadata> searchCollectionMetadata(String storeName, String name, Integer offset, Integer limit)
+            throws StackException
+    {
+        String url = backendUrl + storeUriFragment(storeName) + "/collection/search/metadata";
+
+        SearchQuery query = new SearchQuery();
+
+        query.offset = offset;
+        query.limit = limit;
+
+        if(name != null)
+        {
+            SearchCriteria nameCriteria = new SearchCriteria();
+
+            nameCriteria.key = "name";
+            nameCriteria.value = name;
+
+            query.criteria.add(nameCriteria);
+        }
+
+        Gson gson = new Gson();
+
+        HttpPost request = new HttpPost(url);
+
+        try
+        {
+            request.setHeader("Content-Type", "application/json");
+            request.setEntity(new StringEntity(gson.toJson(query)));
+
+            HttpResponse response = client.execute(request);
+
+            checkResponseCode(response);
+
+            InputStream inputStream = response.getEntity().getContent();
+
+            ArrayList<IdentifiedMetadata> metadataList = gson.fromJson(
+            		new InputStreamReader(inputStream),
+            			new TypeToken<ArrayList<IdentifiedMetadata>>(){}.getType());
+            
+            return metadataList;
+        }
+        catch (Exception e)
+        {
+            throw new StackException(e);
+        }
+    }
+    
+    public ArrayList<IdentifiedMetadata> searchCollectionMetadata(String name, Integer offset, Integer limit)
+            throws StackException
+    {
+    	return searchCollectionMetadata(null, name, offset, limit);
+    }
     
     /**
      * Return the number of ComponentDefinition instances matching a ComponentDefinition template in a given store.
