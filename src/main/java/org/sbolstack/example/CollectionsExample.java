@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Collections;
 
 import org.sbolstack.frontend.IdentifiedMetadata;
 import org.sbolstack.frontend.StackException;
@@ -27,6 +28,18 @@ public class CollectionsExample {
             for(IdentifiedMetadata subCollectionMetadata : subCollections)
             {
                 System.out.println("\t" + subCollectionMetadata.name + ": " + subCollectionMetadata.uri);
+
+                /* first 10 parts from the subcollection
+                 */
+                ArrayList<IdentifiedMetadata> components =
+                    frontend.searchComponentMetadata(null, new HashSet<URI>(), new HashSet<URI>(), Collections.singleton(new URI(subCollectionMetadata.uri)), 0, 10);
+
+                for(IdentifiedMetadata componentMetadata : components)
+                {
+                    System.out.println("\t\t" + componentMetadata.name + ": " + componentMetadata.uri);
+                }
+
+
             }
         
         }

@@ -395,7 +395,7 @@ public class StackFrontend
      * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public SBOLDocument searchComponents(String storeName, String name, Set<URI> roles, Integer offset, Integer limit)
+    public SBOLDocument searchComponents(String storeName, String name, Set<URI> roles, Set<URI> types, Set<URI> collections, Integer offset, Integer limit)
             throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/component/search/sbol";
@@ -411,6 +411,22 @@ public class StackFrontend
 
             roleCriteria.key = "role";
             roleCriteria.value = uri.toString();
+        }
+
+        for(URI uri : types)
+        {
+            SearchCriteria typeCriteria = new SearchCriteria();
+
+            typeCriteria.key = "type";
+            typeCriteria.value = uri.toString();
+        }
+
+        for(URI uri : collections)
+        {
+            SearchCriteria collectionCriteria = new SearchCriteria();
+
+            collectionCriteria.key = "collection";
+            collectionCriteria.value = uri.toString();
         }
 
         if(name != null)
@@ -459,10 +475,10 @@ public class StackFrontend
      * @throws StackException if there was an error communicating with the stack
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public SBOLDocument searchComponents(String name, Set<URI> roles, Integer offset, Integer limit)
+    public SBOLDocument searchComponents(String name, Set<URI> roles, Set<URI> types, Set<URI> collections, Integer offset, Integer limit)
             throws StackException
     {
-        return searchComponents(null, name, roles, offset, limit);
+        return searchComponents(null, name, roles, types, collections, offset, limit);
     }
 
 
@@ -497,10 +513,10 @@ public class StackFrontend
      * @throws StackException if there was an error communicating with the stack
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public ArrayList<IdentifiedMetadata> searchComponentMetadata(String name, Set<URI> roles, Integer offset, Integer limit)
+    public ArrayList<IdentifiedMetadata> searchComponentMetadata(String name, Set<URI> roles, Set<URI> types, Set<URI> collections, Integer offset, Integer limit)
             throws StackException
     {
-        return searchComponentMetadata(null, name, roles, offset, limit);
+        return searchComponentMetadata(null, name, roles, types, collections, offset, limit);
     }
 
     
@@ -519,7 +535,7 @@ public class StackFrontend
      * @throws StackException if the specified store name does not exist
      * @throws PermissionException if read permission is not granted by the backend
      */
-    public ArrayList<IdentifiedMetadata> searchComponentMetadata(String storeName, String name, Set<URI> roles, Integer offset, Integer limit)
+    public ArrayList<IdentifiedMetadata> searchComponentMetadata(String storeName, String name, Set<URI> roles, Set<URI> types, Set<URI> collections, Integer offset, Integer limit)
             throws StackException
     {
         String url = backendUrl + storeUriFragment(storeName) + "/component/search/metadata";
@@ -537,6 +553,26 @@ public class StackFrontend
             roleCriteria.value = uri.toString();
             
             query.criteria.add(roleCriteria);
+        }
+
+        for(URI uri : types)
+        {
+            SearchCriteria typeCriteria = new SearchCriteria();
+
+            typeCriteria.key = "type";
+            typeCriteria.value = uri.toString();
+            
+            query.criteria.add(typeCriteria);
+        }
+
+        for(URI uri : collections)
+        {
+            SearchCriteria collectionCriteria = new SearchCriteria();
+
+            collectionCriteria.key = "collection";
+            collectionCriteria.value = uri.toString();
+            
+            query.criteria.add(collectionCriteria);
         }
 
         if(name != null)
