@@ -632,6 +632,41 @@ public class StackFrontend
     {
     	return searchCollectionMetadata(null, name, offset, limit);
     }
+
+    public ArrayList<IdentifiedMetadata> fetchRootCollectionMetadata()
+            throws StackException
+    {
+    	return fetchRootCollectionMetadata(null);
+    }
+
+    public ArrayList<IdentifiedMetadata> fetchRootCollectionMetadata(String storeName)
+            throws StackException
+    {
+        String url = backendUrl + storeUriFragment(storeName) + "/collection/roots";
+
+        Gson gson = new Gson();
+
+        HttpGet request = new HttpGet(url);
+
+        try
+        {
+            HttpResponse response = client.execute(request);
+
+            checkResponseCode(response);
+
+            InputStream inputStream = response.getEntity().getContent();
+
+            ArrayList<IdentifiedMetadata> metadataList = gson.fromJson(
+            		new InputStreamReader(inputStream),
+            			new TypeToken<ArrayList<IdentifiedMetadata>>(){}.getType());
+            
+            return metadataList;
+        }
+        catch (Exception e)
+        {
+            throw new StackException(e);
+        }
+    }
     
     /**
      * Return the number of ComponentDefinition instances matching a ComponentDefinition template in a given store.
