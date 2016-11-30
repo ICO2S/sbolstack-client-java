@@ -18,12 +18,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -934,26 +936,30 @@ public class StackFrontend
 
     private TopLevel fetchTopLevel(String url, URI topLevelUri) throws StackException
     {
-        InputStream inputStream;
+    	HttpStream stream;
         
         try
         {
-            inputStream = fetchContentAsInputStream(url);
+            stream = fetchContentAsInputStream(url);
         }
         catch (Exception e)
         {
             throw new StackException("Error connecting to stack endpoint", e);
         }
-            
+        
         SBOLDocument document;
         
         try
         {
-            document = SBOLReader.read(inputStream);
+            document = SBOLReader.read(stream.inputStream);
         }
         catch (Exception e)
         {
             throw new StackException("Error reading SBOL", e);
+        }
+        finally
+        {
+        	stream.request.releaseConnection();
         }
         
         TopLevel topLevel = document.getTopLevel(topLevelUri);
@@ -980,7 +986,20 @@ public class StackFrontend
     
     private String fetchContentAsString(String url) throws StackException, IOException
     {
-        return inputStreamToString(fetchContentAsInputStream(url));
+    	HttpStream stream = fetchContentAsInputStream(url);
+       
+    	String str;
+    	
+    	try
+    	{
+    		str = inputStreamToString(stream.inputStream);
+    	}
+    	finally
+    	{
+    		stream.request.releaseConnection();        	
+    	}
+    	
+    	return str;
     }
 
     private String inputStreamToString(InputStream inputStream) throws IOException
@@ -992,22 +1011,41 @@ public class StackFrontend
         return writer.toString();
     }
     
-    private InputStream fetchContentAsInputStream(String url) throws StackException, IOException
+    class HttpStream
     {
-	HttpGet request = new HttpGet(url);
-
-	try
-	{
-		HttpResponse response = client.execute(request);
-
-		checkResponseCode(response);
-        
-		return response.getEntity().getContent();
-	}
-	finally
-	{
-		request.releaseConnection();
-	}
+    	public InputStream inputStream;
+    	public HttpRequestBase request;
+    }
+    
+    private HttpStream fetchContentAsInputStream(String url) throws StackException, IOException
+    {
+		HttpGet request = new HttpGet(url);
+		
+    	try
+    	{
+			HttpResponse response = client.execute(request);
+	
+			checkResponseCode(response);
+	        
+			HttpStream res = new HttpStream();
+			
+			res.inputStream = response.getEntity().getContent();
+			res.request = request;
+			
+			return res;
+    	}
+    	catch(StackException e)
+    	{
+    		request.releaseConnection();
+    		
+    		throw e;
+    	}
+    	catch(IOException e)
+    	{
+    		request.releaseConnection();
+    		
+    		throw e;
+    	}
     }
     
     private String storeUriFragment(String storeName)
