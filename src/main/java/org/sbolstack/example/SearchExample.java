@@ -15,7 +15,7 @@ public class SearchExample
 
         HashSet<URI> roles = new HashSet<URI>();
 
-        SBOLDocument results = frontend.searchComponents("BO_*", roles, 0, 2);
+        SBOLDocument results = frontend.searchComponents("BO_*", roles, new HashSet<URI>(), new HashSet<URI>(), 0, 2);
 
         SBOLWriter.write(results, System.out);
     }

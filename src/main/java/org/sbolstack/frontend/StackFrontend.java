@@ -27,10 +27,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.sbolstandard.core2.*;
 
 public class StackFrontend
 {
+    PoolingHttpClientConnectionManager connectionManager;
     HttpClient client;
     String backendUrl;
 
@@ -38,7 +40,8 @@ public class StackFrontend
     {
         this.backendUrl = backendUrl;
 
-        client = HttpClients.createDefault();
+        connectionManager = new PoolingHttpClientConnectionManager();
+        client = HttpClients.custom().setConnectionManager(connectionManager).build();
     }
 
     public String getBackendUrl()
@@ -377,6 +380,10 @@ public class StackFrontend
         {
             throw new StackException(e);
         }
+        finally
+        {
+            request.releaseConnection();
+        }
     }
 
 
@@ -459,6 +466,10 @@ public class StackFrontend
         catch (Exception e)
         {
             throw new StackException(e);
+        }
+        finally
+        {
+            request.releaseConnection();
         }
     }
 
@@ -610,6 +621,10 @@ public class StackFrontend
         {
             throw new StackException(e);
         }
+        finally
+        {
+            request.releaseConnection();
+        }
     }
 
 
@@ -661,6 +676,10 @@ public class StackFrontend
         {
             throw new StackException(e);
         }
+        finally
+        {
+            request.releaseConnection();
+        }
     }
     
     public ArrayList<IdentifiedMetadata> searchCollectionMetadata(String name, Integer offset, Integer limit)
@@ -702,6 +721,10 @@ public class StackFrontend
         {
             throw new StackException(e);
         }
+        finally
+        {
+            request.releaseConnection();
+        }
     }
 
     public ArrayList<IdentifiedMetadata> fetchSubCollectionMetadata(URI parentCollectionUri)
@@ -736,6 +759,10 @@ public class StackFrontend
         catch (Exception e)
         {
             throw new StackException(e);
+        }
+        finally
+        {
+            request.releaseConnection();
         }
     }
     
@@ -775,6 +802,10 @@ public class StackFrontend
         catch (Exception e)
         {
             throw new StackException(e);
+        }
+        finally
+        {
+            request.releaseConnection();
         }
     }
 
@@ -823,6 +854,10 @@ public class StackFrontend
         {
             throw new StackException(e);
         }
+        finally
+        {
+            request.releaseConnection();
+        }
     }
 
     
@@ -870,6 +905,10 @@ public class StackFrontend
         catch (Exception e)
         {
             throw new StackException(e);
+        }
+        finally
+        {
+            request.releaseConnection();
         }
     }
     
@@ -960,7 +999,11 @@ public class StackFrontend
 
         checkResponseCode(response);
         
-        return response.getEntity().getContent();
+        InputStream res = response.getEntity().getContent();
+
+        request.releaseConnection();
+
+        return res;
     }
     
     private String storeUriFragment(String storeName)

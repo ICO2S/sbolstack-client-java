@@ -18,7 +18,7 @@ public class SearchMetadataExample {
         HashSet<URI> roles = new HashSet<URI>();
         roles.add(SequenceOntology.PROMOTER);
         
-        ArrayList<IdentifiedMetadata> results = frontend.searchComponentMetadata(null, roles, 0, 1000);
+        ArrayList<IdentifiedMetadata> results = frontend.searchComponentMetadata(null, roles, new HashSet<URI>(), new HashSet<URI>(), 0, 1000);
         
         for(IdentifiedMetadata result : results)
         {
