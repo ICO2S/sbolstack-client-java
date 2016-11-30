@@ -994,16 +994,20 @@ public class StackFrontend
     
     private InputStream fetchContentAsInputStream(String url) throws StackException, IOException
     {
-        HttpGet request = new HttpGet(url);
-        HttpResponse response = client.execute(request);
+	HttpGet request = new HttpGet(url);
 
-        checkResponseCode(response);
+	try
+	{
+		HttpResponse response = client.execute(request);
+
+		checkResponseCode(response);
         
-        InputStream res = response.getEntity().getContent();
-
-        request.releaseConnection();
-
-        return res;
+		return response.getEntity().getContent();
+	}
+	finally
+	{
+		request.releaseConnection();
+	}
     }
     
     private String storeUriFragment(String storeName)
